@@ -1,3 +1,4 @@
+#This was for resizing the size of the boot partition so you actually had space to install a new kernel
 cd /tmp
 wget https://dl.bananian.org/releases/bananian-latest.zip
 command -v unzip >/dev/null 2>&1 || { apt-get install unzip -y; }
