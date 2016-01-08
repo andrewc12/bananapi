@@ -1,4 +1,7 @@
 #!/bin/sh
+#This was an attempt at a blind installation because the display didn't work
+# I was trying to incorporate a preseed file so the installation would proceed without asking questions
+#I don't even know how far this progressed or if it even booted
 cd /tmp
 
 wget http://d-i.debian.org/daily-images/armhf/20151218-00:32/netboot/SD-card-images/firmware.BananaPi.img.gz
