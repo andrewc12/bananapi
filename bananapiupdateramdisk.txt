@@ -1,3 +1,4 @@
+#This is supposed to grab the SD card image with a display that works and update the debian installer
 cd /tmp
 wget https://github.com/ssvb/sunxi-bootsetup/releases/download/20141215-sunxi-bootsetup-prototype/20141215-sunxi-bootsetup-prototype-v6.img.xz
 xz -d 20141215-sunxi-bootsetup-prototype-v6.img.xz
