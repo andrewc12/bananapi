@@ -1,6 +1,6 @@
 #!/bin/bash
 qemu=0
-arch=
+arch=""
 debootstrap="debootstrap"
  
  while :; do
