@@ -1,0 +1,28 @@
+#!/bin/sh
+cd /tmp
+
+wget http://d-i.debian.org/daily-images/armhf/20151218-00:32/netboot/SD-card-images/firmware.BananaPi.img.gz
+wget http://d-i.debian.org/daily-images/armhf/20151218-00:32/netboot/SD-card-images/partition.img.gz
+gzip -d partition.img.gz
+
+export DEVLO=$(losetup -f --show -P /tmp/partition.img)
+echo $DEVLO
+
+#fdisk -lu /dev/loop0
+mkdir /tmp/mnt
+mkdir /tmp/initrd
+mount  /dev/loop0 /tmp/mnt
+#command -v mkimage >/dev/null 2>&1 || { apt-get install u-boot-tools -y; }
+cd /tmp/initrd
+   zcat  /tmp/mnt/initrd.gz | cpio -iv
+cp -v /storage/home/andrew/scripts/bananapipreseed.cfg /tmp/initrd/preseed.cfg
+
+cd /tmp/initrd && find . -print0 | cpio -0 -H newc -ov | gzip -c > /tmp/initrd.gz
+
+
+mkimage -A arm -O linux -T ramdisk -C lzma -a 0x43300000 -n "Debian Installer" -d /tmp/initrd.gz /tmp/mnt/initrd.gz
+umount /tmp/mnt
+losetup -d /dev/loop0
+cd /tmp
+gzip partition.img
+zcat firmware.BananaPi.img.gz partition.img > BananaPipreseed.img

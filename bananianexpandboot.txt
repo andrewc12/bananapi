@@ -1,0 +1,31 @@
+cd /tmp
+wget https://dl.bananian.org/releases/bananian-latest.zip
+command -v unzip >/dev/null 2>&1 || { apt-get install unzip -y; }
+unzip bananian-latest.zip
+
+dd if=/dev/zero bs=1M count=2000 >> /tmp/bananian-1508.img
+
+#xz -d 20141215-sunxi-bootsetup-prototype-v6.img.xz
+
+losetup -f --show -P /tmp/bananian-1508.img
+dd if=/dev/loop0p1 of=/tmp/bananian-1508p1.img bs=1M
+dd if=/dev/loop0p2 of=/tmp/bananian-1508p2.img bs=1M
+fdisk  /dev/loop0
+#delete p2
+#resize p1 /dev/loop0p1       2048 43007   40960  20M 83 Linux
+#create p2
+dd if=/tmp/bananian-1508p1.img of=/dev/loop0p1 bs=1M
+dd if=/tmp/bananian-1508p2.img of=/dev/loop0p2 bs=1M
+
+e2fsck -f /dev/loop0p2
+command -v fatresize >/dev/null 2>&1 || { apt-get install fatresize -y; }
+fatresize /dev/loop0p1
+resize2fs /dev/loop0p2
+
+fdisk -lu /dev/loop0
+
+losetup -d /dev/loop0
+
+mv bananian-1508.img bananian-1508-1gbboot.img
+gzip bananian-1508-1gbboot.img
+#gunzip -c /bananian-1508-1gbboot.img.gz | dd of=/dev/mmcblk0 conv=noerror bs=64K 

@@ -1,0 +1,20 @@
+cd /tmp
+wget https://github.com/ssvb/sunxi-bootsetup/releases/download/20141215-sunxi-bootsetup-prototype/20141215-sunxi-bootsetup-prototype-v6.img.xz
+xz -d 20141215-sunxi-bootsetup-prototype-v6.img.xz
+
+losetup -f --show -P /tmp/20141215-sunxi-bootsetup-prototype-v6.img
+
+fdisk -lu /dev/loop0
+mkdir /tmp/mnt
+mount  /dev/loop0p1 /tmp/mnt
+command -v mkimage >/dev/null 2>&1 || { apt-get install u-boot-tools -y; }
+
+wget http://d-i.debian.org/daily-images/armhf/20151218-00:32/netboot/initrd.gz
+   gzip -d initrd.gz
+   lzma initrd
+   mkimage -A arm -O linux -T ramdisk -C lzma -a 0x43300000 -n "Debian Installer" -d initrd.lzma initrd-debian-netboot.lzma.uboot
+cp initrd-debian-netboot.lzma.uboot /tmp/mnt/boot/initrd-debian-netboot.lzma.uboot 
+wget http://d-i.debian.org/daily-images/armhf/20151218-00:32/netboot/vmlinuz
+cp vmlinuz /tmp/mnt/boot/debian-vmlinuz
+umount /tmp/mnt
+losetup -d /dev/loop0
